@@ -10,6 +10,8 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -53,7 +55,7 @@ public class JwtUtil {
         return claims.get("sub", String.class);
     }
 
-    public Set<String> getRoles(String token) {
+    public Set<String> getRoles1(String token) {
         Claims claims = extractAllClaims(token);
         Object rolesObject = claims.get("roles");
         if (rolesObject instanceof Collection<?>) {
@@ -63,5 +65,19 @@ public class JwtUtil {
                     .collect(Collectors.toSet());
         }
         return Collections.emptySet();
+    }
+    public Set<String> getRoles(String token) {
+        Claims claims = extractAllClaims(token);
+
+        // "roles" is an array of objects like { "authority": "ROLE_ADMIN" }
+        List<Map<String, String>> roles = claims.get("roles", List.class);
+
+        if (roles == null) {
+            return Set.of();
+        }
+
+        return roles.stream()
+                .map(roleMap -> roleMap.get("authority")) // only take "authority" field
+                .collect(Collectors.toSet());
     }
 }

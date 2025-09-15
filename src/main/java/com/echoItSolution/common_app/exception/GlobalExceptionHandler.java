@@ -4,9 +4,11 @@ import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,6 +32,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleException(Exception ex,
                                                                   HttpServletRequest request){
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request.getServletPath());
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthorizationDeniedException(AuthorizationDeniedException ex,
+                                                               HttpServletRequest request){
+        return buildResponse(HttpStatus.FORBIDDEN, ex.getMessage(), request.getServletPath());
     }
 
     private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String message, String path) {
