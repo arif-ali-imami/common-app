@@ -2,6 +2,7 @@ package com.echoItSolution.common_app.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -12,6 +13,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class CommonConfig {
 
     @Bean
+    @LoadBalanced
     @SuppressWarnings("uncheck")
     public RestTemplate restTemplateConfig(RestTemplateBuilder builder){
         return builder
