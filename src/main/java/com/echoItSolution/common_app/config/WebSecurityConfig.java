@@ -28,7 +28,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/public/**", "/auth/**",
-                                "/user/create"
+                                "/user/create",
+                                "/actuator/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
