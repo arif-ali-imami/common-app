@@ -1,5 +1,6 @@
 package com.echoItSolution.common_app.exception;
 
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -8,7 +9,6 @@ import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,7 +31,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(Exception ex,
                                                                   HttpServletRequest request){
+        ex.printStackTrace();
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request.getServletPath());
+    }
+
+    @ExceptionHandler(RequestNotPermitted.class)
+    public ResponseEntity<Map<String, Object>> handleRequestNotPermitted(RequestNotPermitted ex,
+                                                                         HttpServletRequest request){
+        return buildResponse(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage(), request.getServletPath());
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)
